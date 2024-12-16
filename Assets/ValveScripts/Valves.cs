@@ -369,6 +369,34 @@ public class Valves : MonoBehaviour {
         }
     }
 
+    private IEnumerator TwitchHandleForcedSolve()
+    {
+        //if all the vales need to be up, press the first one twice
+        if (solution.All(c => c == '0'))
+        {
+            valves[0].OnInteract();
+            yield return new WaitUntil(() => !animationInProgress);
+            valves[0].OnInteract();
+        }
+        //otherwise press the onese that need to be down
+        else
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (solution[i] == '1')
+                {
+                    valves[i].OnInteract();
+                    yield return new WaitUntil(() => !animationInProgress);
+                }
+            }
+        }
+
+        while (!bombSolved)
+        {
+            yield return null;
+        }
+    }
+
     private void DebugLog(string log, params object[] args)
     {
         string text = string.Format(log, args);
